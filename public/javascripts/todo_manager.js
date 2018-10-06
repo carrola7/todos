@@ -229,3 +229,43 @@ class DatabasePersistence {
     });
   }
 }
+
+class Modal {
+  constructor(template) {
+    this.node = this.createNode(template)
+    this.title = this.node.querySelector('input[id="title"]');
+    this.day = this.node.querySelector('select[name="day"]');
+    this.month = this.node.querySelector('select[name="month"]');
+    this.year = this.node.querySelector('select[name="year"]');
+    this.description = this.node.querySelector('textarea');
+  }
+
+  createNode(template) {
+    const holder = document.createElement('div');
+    holder.innerHTML = template({});
+    const node = holder.firstElementChild;
+    node.setAttribute('data-action', 'add');
+    node.classList.add('hidden');
+    document.querySelector('main').appendChild(node);
+    return node;
+  }
+
+  reset() {
+    this.node.reset();
+    this.node.setAttribute('data-action', 'add');
+    this.node.classList.add('hidden');
+  }
+
+  update(todo) {
+    if (todo.title) this.title.value = todo.title;
+    if (todo.day) this.day.value = todo.day;
+    if (todo.month) this.month.value = todo.month;
+    if (todo.year) this.year.value = todo.year;
+    if (todo.description) this.description.value = todo.description;
+    this.node.setAttribute('data-action', 'update')
+  }
+
+  show() {
+    this.node.classList.remove('hidden');
+  }
+}

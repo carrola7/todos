@@ -9,7 +9,7 @@ class App {
       this.todoManager = new TodoManager(this.todoList);
       this.renderPage();
     }); 
-    this.newTodoModal = this.createNewTodoModal();
+    this.modal = new Modal(this.templates.modal);
     this.todoListElement = document.getElementById('todoList'); 
 
     this.bind();
@@ -39,6 +39,7 @@ class App {
 
   registerHelpers() {
     this.registerDueDateHelper();
+    this.registerStringifyHelper();
   }
 
   registerDueDateHelper() {
@@ -48,6 +49,12 @@ class App {
       } else {
         return "No Due Date";
       }
+    });
+  }
+
+  registerStringifyHelper() {
+    Handlebars.registerHelper('stringify', function(todo) {
+      return JSON.stringify(todo);
     });
   }
 
@@ -65,21 +72,11 @@ class App {
     document.querySelector('span.active-todos').textContent = this.todoManager.allTodos().length
   }
 
-  createNewTodoModal() {
-    const holder = document.createElement('div');
-    holder.innerHTML = this.templates.modal({});
-    const modal = holder.firstElementChild;
-    modal.setAttribute('data-action', 'add');
-    modal.classList.add('hidden');
-    document.querySelector('main').appendChild(modal);
-    return modal;
-  }
-
   bind() {
     document.getElementById('todoPage').onclick = this.handleTodoPageClick.bind(this);
     document.onclick = this.handleDocumentClick.bind(this);
-    this.newTodoModal.onsubmit = this.handleModalSubmit.bind(this);
-    this.newTodoModal.onclick = this.handleModalClick.bind(this);
+    this.modal.node.onsubmit = this.handleModalSubmit.bind(this);
+    this.modal.node.onclick = this.handleModalClick.bind(this);
   }
 
   handleTodoPageClick(event) {
@@ -91,6 +88,10 @@ class App {
       case 'DIV':
       case 'SPAN':
         this.toggleTodo(event.target.getAttribute('data-id'));
+        break;
+      case 'LABEL':
+        event.stopPropagation();
+        this.showModalFor(event.target.getAttribute('data-todo'));
         break;
     }
   }
@@ -108,7 +109,7 @@ class App {
     const a = event.target;
     switch (a.getAttribute('data-action')) {
       case "newTodo":
-        this.newTodoModal.classList.remove('hidden');
+        this.modal.node.classList.remove('hidden');
         break;
       case "deleteTodo":
         const id = a.getAttribute('data-id');
@@ -131,6 +132,13 @@ class App {
 
   }
 
+  showModalFor(todo) {
+    todo = JSON.parse(todo);
+    this.modal.update(todo);
+    this.modal.show();
+
+  }
+
   handleFormClick(event) {
     if(event.target.className.includes('modal')) {
       event.preventDefault();
@@ -149,7 +157,7 @@ class App {
       case 'add':
         const props = this.extractTodoProps(event.target);
         this.addTodo(props);
-        event.target.classList.add('hidden');
+        this.modal.reset();
         break;
     }
   }

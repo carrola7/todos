@@ -98,7 +98,7 @@
                     <label for="title">Title</label>
                   </dt>
                   <dd>
-                    <input id="title" type="text" name="title" value="" placeholder="Item Name">
+                    <input id="title" type="text" name="title" placeholder="Item Name">
                   </dd> 
                 </dl>
                 <dl>
@@ -109,7 +109,7 @@
                     <ul>
                       <li>
                         <select name="day" aria-labelledby="due-date">
-                          <option value="" disabled selected hidden>Day</option>
+                          <option disabled selected hidden>Day</option>
                           <option value="01">1</option>
                           <option value="02">2</option>
                           <option value="03">3</option>
@@ -146,7 +146,7 @@
                       <li class="forward-slash">/</li>
                       <li>
                         <select name="month" aria-labelledby="due-date">
-                          <option value="" disabled selected hidden>Month</option>
+                          <option disabled selected hidden>Month</option>
                           <option value="01">January</option>
                           <option value="02">February</option>
                           <option value="03">March</option>
@@ -164,7 +164,7 @@
                       <li class="forward-slash">/</li>
                       <li>
                         <select name="year" aria-labelledby="due-date">
-                          <option value="" disabled selected hidden>Year</option>
+                          <option disabled selected hidden>Year</option>
                           <option value="2017">2017</option>
                           <option value="2018">2018</option>
                           <option value="2019">2019</option>
@@ -206,7 +206,7 @@
               <div class="todo description" data-id={{id}}>
                   <span data-id={{id}}></span>
                   <input type="checkbox" class="hidden" id="item-{{id}}"/>
-                  <label for="item-{{id}}" class="item">{{title}} - {{dueDate .}}</label>
+                  <label data-todo="{{stringify .}}" for="item-{{id}}" class="item">{{title}} - {{dueDate .}}</label>
               </div>
               <div class="todo delete">
                 <a href="/api/todos/{{id}}" data-action="deleteTodo" data-id="{{id}}">Delete</a>
