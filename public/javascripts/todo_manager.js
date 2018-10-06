@@ -155,10 +155,26 @@ const Todo = (function() {
   return Todo;
 }());
 
+class TodoListElement {
+  constructor(node) {
+    this.node = node;
+  }
+
+  setContent(html) {
+    this.node.innerHTML = html;
+  }
+
+  add(todo) {
+    
+  }
+}
+
 class DatabasePersistence {
   constructor() {
     this.findAllAction = "/api/todos";
     this.findAllMethod = "GET";
+    this.addTodoAction = "/api/todos";
+    this.addTodoMethod = "POST";
   }
 
   findAllTodos() {
@@ -169,5 +185,27 @@ class DatabasePersistence {
     xhr.onload = () => resolve(xhr.response);
     xhr.send();
    });
+ }
+
+  add(props) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open(this.addTodoMethod, this.addTodoAction);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.responseType = 'json';
+      xhr.onload = () => {
+        console.log(xhr.status);
+        console.log(typeof xhr.status)
+        switch(xhr.status) {
+          case 201:
+            resolve(xhr.response);
+            break;
+          case 400:
+            reject(xhr.response);
+            break;
+        }
+      }
+      xhr.send(JSON.stringify(props));
+    });
   }
 }

@@ -256,6 +256,10 @@ form.delete input {
   color: black;
 }
 
+form.modal.hidden {
+  display: none;
+}
+
 form.modal fieldset {
   padding: 37px 45px 37px 18px;
 }
@@ -308,7 +312,7 @@ form.modal select {
   -moz-appearance: none;
   -webkit-appearance: none;
   appearance: none;
-  background-image: url(scroll_triangles.png);
+  background-image: url(/images/scroll_triangles.png);
   background-position: 93% center;
   background-repeat: no-repeat;
 }
@@ -336,9 +340,6 @@ form.modal fieldset dl:nth-child(1) {
   margin-bottom: 35px;
 }
 
-form.modal {
-  display: none;
-}
 
 form.modal fieldset {
   z-index: 2;
@@ -371,7 +372,7 @@ form.modal select:invalid {
   color: #757575; 
 }
 
-#item-1:checked + label + form.modal {
+form.modal {
   display: block;
   background: white;
   position: absolute;
@@ -383,7 +384,7 @@ form.modal select:invalid {
   z-index: 3;
 }
 
-#item-1:checked + label + form.modal:before {
+form.modal:before {
   content: "";
   position: fixed;
   top: 0;
