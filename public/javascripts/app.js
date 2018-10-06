@@ -10,7 +10,7 @@ class App {
       this.renderTodoList();
     }); 
     this.newTodoModal = this.createNewTodoModal();
-    this.todoListElement = new TodoListElement(document.getElementById('todoList')); 
+    this.todoListElement = document.getElementById('todoList'); 
 
     this.bind();
   }
@@ -53,7 +53,7 @@ class App {
 
   renderTodoList() {
     const html = this.templates.todoItems({ todos: this.todoManager.allTodos() });
-    this.todoListElement.setContent(html);
+    this.todoListElement.innerHTML = html;
   }
 
   createNewTodoModal() {
@@ -84,9 +84,20 @@ class App {
   }
 
   handleAnchorClick(event) {
-    if(event.target.getAttribute('data-action') === "newTodo") {
-      event.preventDefault()
-      this.newTodoModal.classList.remove('hidden');
+    event.preventDefault();
+    const a = event.target;
+    switch (a.getAttribute('data-action')) {
+      case "newTodo":
+        this.newTodoModal.classList.remove('hidden');
+        break;
+      case "deleteTodo":
+        const id = a.getAttribute('data-id');
+        this.storage.deleteTodo(id).then(() => {
+                                      this.todoList.deleteTodo(+id)
+                                      this.renderTodoList()
+                                    });
+                                    
+        break;
     }
   }
 
@@ -122,11 +133,12 @@ class App {
     this.storage.add(props)
                 .then(todo => {
                   this.todoList.addTodo(todo);
-                  this.todoListElement.add(todo);
+                  this.renderTodoList();
                 });
   }
 }
 
+var app;
 document.addEventListener('DOMContentLoaded', function() {
-  new App();
+  app = new App();
 })

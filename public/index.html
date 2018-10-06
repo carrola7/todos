@@ -106,7 +106,7 @@
                   <dd>
                     <ul>
                       <li>
-                        <select aria-labelledby="due-date">
+                        <select name="day" aria-labelledby="due-date">
                           <option value="01">1</option>
                           <option value="02">2</option>
                           <option value="03">3</option>
@@ -142,7 +142,7 @@
                       </li>
                       <li class="forward-slash">/</li>
                       <li>
-                        <select required aria-labelledby="due-date">
+                        <select name="month" required aria-labelledby="due-date">
                           <option value="" disabled selected hidden>Month</option>
                           <option value="01">January</option>
                           <option value="02">February</option>
@@ -160,7 +160,7 @@
                       </li>
                       <li class="forward-slash">/</li>
                       <li>
-                        <select required aria-labelledby="due-date">
+                        <select name="year" required aria-labelledby="due-date">
                           <option value="" disabled selected hidden>Year</option>
                           <option value="2017">2017</option>
                           <option value="2018">2018</option>
@@ -195,16 +195,18 @@
           </script>
 
           <script data-type="partial" id="todoItemPartial" type="text/x-handlebars">
-            {{#if todo.completed}}
+            {{#if completed}}
               <li class="done">
             {{else}}
               <li class="not-done">
             {{/if}}
-              <input type="checkbox" class="hidden" id="item-{{todo.id}}"/>
-              <label for="item-{{todo.id}}" class="item">{{title}} - {{dueDate .}}</label>
-              <form action="/api/todos/{{todo.id}}" class="delete" method="DELETE">
-                  <input type="image" alt="Delete" src="images/trash.png" />
-              </form>
+              <div class="todo description">
+                  <input type="checkbox" class="hidden" id="item-{{id}}"/>
+                  <label for="item-{{id}}" class="item">{{title}} - {{dueDate .}}</label>
+              </div>
+              <div class="todo delete">
+                <a href="/api/todos/{{id}}" data-action="deleteTodo" data-id="{{id}}">Delete</a>
+              </div>
             </li>
           </script>
 

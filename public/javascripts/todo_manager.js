@@ -155,32 +155,17 @@ const Todo = (function() {
   return Todo;
 }());
 
-class TodoListElement {
-  constructor(node) {
-    this.node = node;
-  }
-
-  setContent(html) {
-    this.node.innerHTML = html;
-  }
-
-  add(todo) {
-    
-  }
-}
-
 class DatabasePersistence {
   constructor() {
     this.findAllAction = "/api/todos";
-    this.findAllMethod = "GET";
     this.addTodoAction = "/api/todos";
-    this.addTodoMethod = "POST";
+    this.deleteTodoAction = "/api/todos/"
   }
 
   findAllTodos() {
    return new Promise(resolve => {
     const xhr = new XMLHttpRequest();
-    xhr.open(this.findAllMethod, this.findAllAction);
+    xhr.open("GET", this.findAllAction);
     xhr.responseType = 'json';
     xhr.onload = () => resolve(xhr.response);
     xhr.send();
@@ -190,13 +175,11 @@ class DatabasePersistence {
   add(props) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open(this.addTodoMethod, this.addTodoAction);
+      xhr.open("POST", this.addTodoAction);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.responseType = 'json';
       xhr.onload = () => {
-        console.log(xhr.status);
-        console.log(typeof xhr.status)
-        switch(xhr.status) {
+        switch (xhr.status) {
           case 201:
             resolve(xhr.response);
             break;
@@ -206,6 +189,24 @@ class DatabasePersistence {
         }
       }
       xhr.send(JSON.stringify(props));
+    });
+  }
+
+  deleteTodo(id) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('DELETE', this.deleteTodoAction + id);
+      xhr.onload = () => {
+        switch (xhr.status) {
+          case 204:
+            resolve();
+            break;
+          case 400:
+            reject(xhr.responseText);
+            break;
+        }
+      }
+      xhr.send();
     });
   }
 }

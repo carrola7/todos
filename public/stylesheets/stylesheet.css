@@ -228,10 +228,34 @@ main label {
 
 main li {
   display: flex;
-  padding: 13.5px 0;
+  height: 50px;
+  line-height: 50px;
   border-top: 1px solid #e7e7e7;
   margin: 0 100px 0 20px;
   justify-content: space-between;
+}
+
+div.todo.delete {
+  width: 40px;
+  text-align: center;
+}
+
+div.todo.delete a {
+  content: url("/images/trash.png");
+  display: block;
+  padding: 16px 13px;
+}
+
+div.description:hover {
+  background-color: #CCE1F5;
+}
+
+div.delete:hover {
+  background-color: #FF99A5;
+}
+
+div.todo.description {
+  width: 100%;
 }
 
 main label.item {
