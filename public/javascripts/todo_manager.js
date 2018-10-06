@@ -11,7 +11,7 @@ const TodoManager = (function() {
       const completed = this.completedTodos();
       const uncompleted = todoList.matchingTodos( {completed: false });
 
-      return completed.concat(uncompleted);
+      return uncompleted.concat(completed);
     }
 
     completedTodos() {
@@ -200,6 +200,25 @@ class DatabasePersistence {
         switch (xhr.status) {
           case 204:
             resolve();
+            break;
+          case 400:
+            reject(xhr.responseText);
+            break;
+        }
+      }
+      xhr.send();
+    });
+  }
+
+  toggleTodo(id) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `/api/todos/${id}/toggle_completed`);
+      xhr.responseType = 'json';
+      xhr.onload = () => {
+        switch(xhr.status) {
+          case 201:
+            resolve(xhr.response);
             break;
           case 400:
             reject(xhr.responseText);

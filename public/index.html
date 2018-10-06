@@ -75,15 +75,17 @@
         </section>
       </nav>
       <main>
-        <h1>
-          02/16<span class="active-todos">8</span>
-        </h1>
-        <p>
-          <a data-action="newTodo" href="#">Add new to do</a>
-        </p>
-        <ul id="todoList">
-          
-        </ul>
+        <div id="todoPage">
+          <h1>
+            02/16<span class="active-todos">8</span>
+          </h1>
+          <p>
+            <a data-action="newTodo" href="#">Add new to do</a>
+          </p>
+          <ul id="todoList">
+            
+          </ul>
+        </div>
       </main>
     </div>
   </body>
@@ -107,6 +109,7 @@
                     <ul>
                       <li>
                         <select name="day" aria-labelledby="due-date">
+                          <option value="" disabled selected hidden>Day</option>
                           <option value="01">1</option>
                           <option value="02">2</option>
                           <option value="03">3</option>
@@ -142,7 +145,7 @@
                       </li>
                       <li class="forward-slash">/</li>
                       <li>
-                        <select name="month" required aria-labelledby="due-date">
+                        <select name="month" aria-labelledby="due-date">
                           <option value="" disabled selected hidden>Month</option>
                           <option value="01">January</option>
                           <option value="02">February</option>
@@ -160,7 +163,7 @@
                       </li>
                       <li class="forward-slash">/</li>
                       <li>
-                        <select name="year" required aria-labelledby="due-date">
+                        <select name="year" aria-labelledby="due-date">
                           <option value="" disabled selected hidden>Year</option>
                           <option value="2017">2017</option>
                           <option value="2018">2018</option>
@@ -200,7 +203,8 @@
             {{else}}
               <li class="not-done">
             {{/if}}
-              <div class="todo description">
+              <div class="todo description" data-id={{id}}>
+                  <span data-id={{id}}></span>
                   <input type="checkbox" class="hidden" id="item-{{id}}"/>
                   <label for="item-{{id}}" class="item">{{title}} - {{dueDate .}}</label>
               </div>

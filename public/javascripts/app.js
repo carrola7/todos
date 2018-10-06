@@ -7,7 +7,7 @@ class App {
     this.storage.findAllTodos().then(todos => {
       this.todoList = new TodoList(todos);
       this.todoManager = new TodoManager(this.todoList);
-      this.renderTodoList();
+      this.renderPage();
     }); 
     this.newTodoModal = this.createNewTodoModal();
     this.todoListElement = document.getElementById('todoList'); 
@@ -51,9 +51,18 @@ class App {
     });
   }
 
+  renderPage() {
+    this.renderTodoList();
+    this.renderTotalTodos();
+  }
+
   renderTodoList() {
     const html = this.templates.todoItems({ todos: this.todoManager.allTodos() });
     this.todoListElement.innerHTML = html;
+  }
+
+  renderTotalTodos() {
+    document.querySelector('span.active-todos').textContent = this.todoManager.allTodos().length
   }
 
   createNewTodoModal() {
@@ -67,16 +76,27 @@ class App {
   }
 
   bind() {
-    document.onclick = this.handleClick.bind(this);
+    document.getElementById('todoPage').onclick = this.handleTodoPageClick.bind(this);
+    document.onclick = this.handleDocumentClick.bind(this);
     this.newTodoModal.onsubmit = this.handleModalSubmit.bind(this);
+    this.newTodoModal.onclick = this.handleModalClick.bind(this);
   }
 
-  handleClick(event) {
-    console.log(event.target);
+  handleTodoPageClick(event) {
+    console.log(event.target.tagName);
     switch (event.target.tagName) {
       case 'A':
         this.handleAnchorClick(event);
         break;
+      case 'DIV':
+      case 'SPAN':
+        this.toggleTodo(event.target.getAttribute('data-id'));
+        break;
+    }
+  }
+
+  handleDocumentClick(event) {
+    switch (event.target.tagName) {
       case 'FORM':
         this.handleFormClick(event);
         break;
@@ -94,11 +114,21 @@ class App {
         const id = a.getAttribute('data-id');
         this.storage.deleteTodo(id).then(() => {
                                       this.todoList.deleteTodo(+id)
-                                      this.renderTodoList()
+                                      this.renderPage()
                                     });
                                     
         break;
     }
+  }
+
+  toggleTodo(id) {
+    this.storage.toggleTodo(id)
+                .then((todo) => {
+                  this.todoList.update(+id, todo);
+                  this.renderPage();
+                })
+                .catch(message => console.error(message));
+
   }
 
   handleFormClick(event) {
@@ -110,12 +140,23 @@ class App {
 
   handleModalSubmit(event) {
     event.preventDefault();
+    const input = document.querySelector('input[name="title"]');
+    if (input.value.length < 3) {
+      alert("The title must have at least three characters");
+      return;
+    }
     switch (event.target.getAttribute('data-action')) {
       case 'add':
         const props = this.extractTodoProps(event.target);
         this.addTodo(props);
         event.target.classList.add('hidden');
         break;
+    }
+  }
+
+  handleModalClick(event) {
+    if (event.target.getAttribute('name') === "completed") {
+      alert("Cannot mark as complete as item has not been created yet!")
     }
   }
 
@@ -133,7 +174,7 @@ class App {
     this.storage.add(props)
                 .then(todo => {
                   this.todoList.addTodo(todo);
-                  this.renderTodoList();
+                  this.renderPage();
                 });
   }
 }

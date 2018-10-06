@@ -175,12 +175,12 @@ main h1 {
   font-size: 1.25rem;
 }
 
-main > h1 + p {
+main h1 + p {
   text-decoration: none;
   margin: 39px 0 14px 32px;
 }
 
-main > h1 + p > a {
+main h1 + p > a {
   text-decoration: none;
   color: #148fd5;
 }
@@ -196,19 +196,19 @@ main h1 span.active-todos {
   top: -2px;
 }
 
-main > h1 + p > a:before{
+main h1 + p > a:before{
   content: url("/images/add.png");
   margin-right: 14px;
 }
 
-main li.not-done label.item:before {
+main li.not-done div.description span {
   content: url('/images/checkbox_not_done.png');
   margin-right: 12px;
   position: relative;
   top: 2px;
 }
 
-main li.done label.item:before {
+main li.done div.description span {
   content: url('/images/checkbox.png');
   margin-right: 12px;
   position: relative;
@@ -256,6 +256,7 @@ div.delete:hover {
 
 div.todo.description {
   width: 100%;
+  padding: 0 0 0 20px;
 }
 
 main label.item {
@@ -420,20 +421,20 @@ form.modal:before {
 }
 
 @media (max-width: 920px) {
-  #item-1:checked + label + form.modal {
+  form.modal {
     margin-left: -290px
   }
 }
 
 @media (max-width: 580px) {
-  #item-1:checked + label + form.modal {
+  form.modal {
     left: 0;
     margin-left: 0;
   }
 }
 
 @media (min-width: 921px) {
-  #item-1:checked + label + form.modal {
+  form.modal {
     margin-left: -123px;
   }
 }
