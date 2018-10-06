@@ -1,1 +1,215 @@
-<p>Hello, World!</p>
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title>Todo Lists</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css">
+    <script src="javascripts/handlebars.js"></script>
+    <script src="javascripts/jquery.js"></script>
+    <script src="javascripts/todo_manager.js"></script>
+    <script src="javascripts/app.js"></script>
+  </head>
+  <body>
+    <div class="flex">
+      <input type="checkbox" id="nav-toggle"/>
+      <label for="nav-toggle"><img src="images/hamburger.png" alt="toggle nav menu"></label>
+      <nav id="nav">
+        <section class="all-todos">
+          <h2>
+            <img src="images/all-todos.png" alt="All todos" />All Todos<span class="highlighted double-digit">18</span>
+          </h2>
+          <ul>
+            <li class="highlighted">
+              <a href="#">
+                <dl>
+                  <dt>02/16</dt>
+                  <dd>8</dd>
+                </dl>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <dl>
+                  <dt>03/16</dt>
+                  <dd>2</dd>
+                </dl>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <dl>
+                  <dt>04/16</dt>
+                  <dd>1</dd>
+                </dl>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <dl>
+                  <dt>05/16</dt>
+                  <dd>1</dd>
+                </dl>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <dl>
+                  <dt>06/16</dt>
+                  <dd>6</dd>
+                </dl>
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section class="completed">
+          <h2>
+            <img src="images/done.png" alt="Completed todos" />Completed
+          </h2>
+          <ul>
+            <li class="done"><a href="#">02/15</a></li>
+            <li class="done"><a href="#">03/15</a></li>
+            <li class="done"><a href="#">04/15</a></li>
+            <li class="done"><a href="#">05/15</a></li>
+            <li class="done"><a href="#">06/14</a></li>
+          </ul>
+        </section>
+      </nav>
+      <main>
+        <h1>
+          02/16<span class="active-todos">8</span>
+        </h1>
+        <p>
+          <a href="#">Add new to do</a>
+        </p>
+        <ul id="todoList">
+          
+        </ul>
+      </main>
+    </div>
+  </body>
+</html> 
+          <script id="modal" type="text/x-handlebars">
+            <form action="" method="" class="modal">
+              <fieldset>
+                <dl>
+                  <dt>
+                    <label for="title">Title</label>
+                  </dt>
+                  <dd>
+                    <input id="title" type="text" name="title" value="" placeholder="Item Name">
+                  </dd> 
+                </dl>
+                <dl>
+                  <dt>
+                    <label id="due-date">Due Date</label>
+                  </dt>
+                  <dd>
+                    <ul>
+                      <li>
+                        <select aria-labelledby="due-date">
+                          <option value="01">1</option>
+                          <option value="02">2</option>
+                          <option value="03">3</option>
+                          <option value="04">4</option>
+                          <option value="05">5</option>
+                          <option value="06">6</option>
+                          <option value="07">7</option>
+                          <option value="08">8</option>
+                          <option value="09">9</option>
+                          <option value="10">10</option>
+                          <option value="11">11</option>
+                          <option value="12">12</option>
+                          <option value="13">13</option>
+                          <option value="14">14</option>
+                          <option value="15">15</option>
+                          <option value="16">16</option>
+                          <option value="17">17</option>
+                          <option value="18">18</option>
+                          <option value="19">19</option>
+                          <option value="20">20</option>
+                          <option value="21">21</option>
+                          <option value="22">22</option>
+                          <option value="23">23</option>
+                          <option value="24">24</option>
+                          <option value="25">25</option>
+                          <option value="26">26</option>
+                          <option value="27">27</option>
+                          <option value="28">28</option>
+                          <option value="29">29</option>
+                          <option value="30">30</option>
+                          <option value="31">31</option>
+                        </select>
+                      </li>
+                      <li class="forward-slash">/</li>
+                      <li>
+                        <select required aria-labelledby="due-date">
+                          <option value="" disabled selected hidden>Month</option>
+                          <option value="01">January</option>
+                          <option value="02">February</option>
+                          <option value="03">March</option>
+                          <option value="04">April</option>
+                          <option value="05">May</option>
+                          <option value="06">June</option>
+                          <option value="07">July</option>
+                          <option value="08">August</option>
+                          <option value="09">September</option>
+                          <option value="10">October</option>
+                          <option value="11">November</option>
+                          <option value="12">December</option>
+                        </select>
+                      </li>
+                      <li class="forward-slash">/</li>
+                      <li>
+                        <select required aria-labelledby="due-date">
+                          <option value="" disabled selected hidden>Year</option>
+                          <option value="2017">2017</option>
+                          <option value="2018">2018</option>
+                          <option value="2019">2019</option>
+                          <option value="2020">2020</option>
+                          <option value="2021">2021</option>
+                          <option value="2022">2022</option>
+                          <option value="2023">2023</option>
+                          <option value="2024">2024</option>
+                          <option value="2025">2025</option>
+                        </select>
+                      </li>
+                    </ul>
+                  </dd>
+                </dl>
+                <dl>
+                  <dt>
+                    <label for="description">Description</label>
+                  </dt>
+                  <dd>
+                    <textarea id="description" name="description" placeholder="Description">{{description}}</textarea>
+                  </dd> 
+                </dl>
+                <button type="submit">
+                  Save
+                </button>
+                <button type="button" name="completed">
+                  Mark As Complete
+                </button>
+              </fieldset>
+            </form>
+          </script>
+
+          <script data-type="partial" id="todoItemPartial" type="text/x-handlebars">
+            {{#if todo.completed}}
+              <li class="done">
+            {{else}}
+              <li class="not-done">
+            {{/if}}
+              <input type="checkbox" class="hidden" id="item-{{todo.id}}"/>
+              <label for="item-{{todo.id}}" class="item">{{title}} - {{dueDate .}}</label>
+              <form action="/api/todos/{{todo.id}}" class="delete" method="DELETE">
+                  <input type="image" alt="Delete" src="images/trash.png" />
+              </form>
+            </li>
+          </script>
+
+          <script id="todoItems" type="text/x-handlebars">
+            {{#each todos}}
+              {{> todoItemPartial}}
+            {{/each}}
+          </script>

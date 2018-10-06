@@ -1,0 +1,416 @@
+@import url("reset.css");
+
+@media (max-width: 768px) {
+  #nav-toggle + label {
+    position: absolute;
+    left: 0;
+    cursor: pointer;
+  }
+
+  #nav-toggle {
+    display: none; 
+  }
+
+  #nav {
+    display: none;
+  }
+
+  #nav-toggle:checked + label + #nav {
+    display: block;
+  }
+
+  #nav-toggle:checked + label {
+    left: 335px;
+    
+  }
+
+  nav {
+    min-width: 335px;
+  }
+
+  main {
+    min-width: 335px;
+  }
+}
+
+@media (min-width: 769px) {
+  #nav-toggle + label {
+    display: none;
+  }
+
+  #nav-toggle {
+    display: none;
+  }
+}
+
+html {
+  height: 100%;
+}
+
+body, input, textarea, select {
+  font: 16px Helvetica, Arial, sans-serif;
+  height: 100%;
+  letter-spacing: 1px;
+}
+
+.flex {
+  display: flex;
+  height: 100%;
+}
+
+main {
+  flex: 1;
+}
+
+nav {
+  width: 335px;
+  height: 100%;
+  background-color: #464f77;
+}
+
+#nav-toggle + label > img {
+  width: 25px;
+  height: 20px;
+  padding: 22px 0 0 32px;
+  color: black;
+}
+
+section a {
+  display: block;
+  font-size: 0.95rem;
+  padding: 11.5px 0 11.5px 137px;
+  color: #b2b5c3;
+  text-decoration: none;
+}
+
+/*section a:hover {
+  background-color: #38405e;
+  color: white;
+}*/
+
+section li.highlighted a {
+  background-color: #38405e;
+  color: white;
+}
+
+section.all-todos h2{
+  padding: 71px 0 0 102px;
+  margin-bottom: 10px;
+}
+
+section h2 {
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: white;
+}
+
+/*section.all-todos li:hover dl dd{
+  color: white;
+  background-color: #148fd5;
+}*/
+
+section.all-todos li.highlighted dl dd{
+  color: white;
+  background-color: #148fd5;
+}
+
+#nav dd, #nav dt {
+  display: inline-block;
+}
+
+section.all-todos dl dd, 
+span.highlighted { 
+  font-size: 14px;
+  color: #b2b5c3;
+  background-color: #6b7292; /*light purple*/
+  padding: 1px 4px 1px 5px;
+  border-radius: 10px;
+}
+
+span.double-digit {
+  padding: 1px 3px;
+}
+
+section img {
+  margin-right: 10px;
+  position: relative;
+  
+}
+
+section.all-todos img {
+  vertical-align: -5px;
+}
+
+section.completed img {
+  vertical-align: -7px;
+}
+
+section.all-todos dd, 
+span.highlighted {
+  float: right;
+  margin-right: 32px;
+}
+
+span.highlighted {
+  position: relative;
+  top: 6px;
+}
+
+section.completed h2 {
+  padding: 55px 0 0 102px;
+  margin-bottom: 12px;
+}
+
+section.completed .done {
+  text-decoration: line-through;
+  color: #b2b5c3;
+}
+
+section.completed .done:hover {
+  color: white;
+}
+
+main h1 {
+  margin: 74px 0 0 32px;
+  font-size: 1.25rem;
+}
+
+main > h1 + p {
+  text-decoration: none;
+  margin: 39px 0 14px 32px;
+}
+
+main > h1 + p > a {
+  text-decoration: none;
+  color: #148fd5;
+}
+
+main h1 span.active-todos {
+  font-size: 14px;
+  color: white;
+  background-color: #148fd5;
+  padding: 1px 4px 1px 5px;
+  border-radius: 10px;
+  margin-left: 20px;
+  position: relative;
+  top: -2px;
+}
+
+main > h1 + p > a:before{
+  content: url("/images/add.png");
+  margin-right: 14px;
+}
+
+main li.not-done label.item:before {
+  content: url('/images/checkbox_not_done.png');
+  margin-right: 12px;
+  position: relative;
+  top: 2px;
+}
+
+main li.done label.item:before {
+  content: url('/images/checkbox.png');
+  margin-right: 12px;
+  position: relative;
+  top: 2px;
+}
+
+input.hidden {
+  display: none;
+}
+
+main label {
+  cursor: pointer;
+  position: relative;
+  left: 12px;
+  letter-spacing: 0.5px;
+}
+
+main li {
+  display: flex;
+  padding: 13.5px 0;
+  border-top: 1px solid #e7e7e7;
+  margin: 0 100px 0 20px;
+  justify-content: space-between;
+}
+
+main label.item {
+  color: #060606;
+}
+
+main label.item:hover {
+  color: #148fd5;
+}
+
+main li.done label.item {
+  color: #b3b3b3;
+  text-decoration: line-through;
+}
+
+main li.done label.item:hover {
+  color: #148fd5;
+}
+
+form.delete input {
+  height: 17px;
+  color: black;
+}
+
+form.modal fieldset {
+  padding: 37px 45px 37px 18px;
+}
+
+form.modal dl {
+  display: flex;
+  margin-bottom: 25px;
+}
+
+form.modal dl:first-of-type > dd,
+form.modal dl:nth-of-type(3) > dd {
+  width: 396px;
+  margin-right: -4px;
+}
+
+
+form.modal dl dt {
+  flex: 1;
+  padding: 9px 0;
+}
+
+form.modal dl dd {
+  width: 392px;
+}
+
+form.modal li {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  width: 120px;
+}
+
+form.modal li.forward-slash {
+  width: 16px;
+  position: relative;
+  left: 5px;
+  top: 9px;
+  padding: 0 5px;
+}
+
+form.modal input {
+  width: 100%;
+  padding: 7px;
+  box-sizing: border-box;
+}
+
+form.modal select {
+  width: 100%;
+  padding: 8px;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url(scroll_triangles.png);
+  background-position: 93% center;
+  background-repeat: no-repeat;
+}
+
+form.modal textarea {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  resize: none;
+  height: 9rem;
+}
+
+form.modal ul {
+  margin-right: -5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+form.modal li, 
+form.modal dl:nth-child(2) > dt {
+  margin-top: -12px;
+}
+
+form.modal fieldset dl:nth-child(1) {
+  margin-bottom: 35px;
+}
+
+form.modal {
+  display: none;
+}
+
+form.modal fieldset {
+  z-index: 2;
+  background: white;
+}
+
+form.modal button {
+  width: 185px;
+  background-color: #148fd5;
+  color: white;
+  padding: 9px 0;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: -5px;
+  letter-spacing: 0.8px;
+}
+
+form.modal button:first-of-type {
+  margin-left: 120px;
+}
+
+form.modal button:last-of-type {
+  margin-left: 13px;
+}
+
+form.modal select:invalid { 
+  color: #757575; 
+}
+
+#item-1:checked + label + form.modal {
+  display: block;
+  background: white;
+  position: absolute;
+  top: 13.2%;
+  left: 50%;
+  margin-left: -123px;
+  width: 575px;
+  height: 402px;
+  z-index: 3;
+}
+
+#item-1:checked + label + form.modal:before {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: -1;
+}
+
+@media (max-width: 920px) {
+  #item-1:checked + label + form.modal {
+    margin-left: -290px
+  }
+}
+
+@media (max-width: 580px) {
+  #item-1:checked + label + form.modal {
+    left: 0;
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 921px) {
+  #item-1:checked + label + form.modal {
+    margin-left: -123px;
+  }
+}
+
+
