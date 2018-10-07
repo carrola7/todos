@@ -7,7 +7,8 @@ class App {
     this.storage.findAllTodos().then(todos => {
       this.todoList = new TodoList(todos);
       this.todoManager = new TodoManager(this.todoList);
-      this.renderAllTodos();
+      this.currentlyVisible = 'all';
+      this.renderTodoPage();
       this.refreshSummaries()
     }); 
     this.modal = new Modal(this.templates.modal);
@@ -66,11 +67,39 @@ class App {
     });
   }
 
-  renderAllTodos() {
-    const all = this.todoManager.allTodos();
+  renderTodoPage() {
+    const todos = this.findVisibleTodos()
+    this.renderTodoList(todos);
+    this.renderTodoCount(todos.length);
+  }
+
+  findVisibleTodos() {
+    switch (this.currentlyVisible) {
+      case 'all':
+        return this.todoManager.allTodos();
+        break;
+      case 'completed':
+        return this.todoManager.completedTodos();
+        break;
+      default:
+        return this.findDateRestrictedTodos();
+        break;
+    }
+  }
+
+  findDateRestrictedTodos() {
+    const currentlyVisible = this.currentlyVisible;
+    if(currentlyVisible.completed === "false") {
+      return this.todoManager.todosInMonthYear(currentlyVisible.month, currentlyVisible.year);
+    } else {
+      return this.todoManager.completedTodosInMonthYear(currentlyVisible.month, currentlyVisible.year);
+    }
+  }
+
+  handleAllTodoClick() {
     this.setHeading('All Todos');
-    this.renderTodoList(all);
-    this.renderTodoCount(all.length);
+    this.currentlyVisible = 'all';
+    this.renderTodoPage();
   }
 
   renderTodoList(todos) {
@@ -84,10 +113,11 @@ class App {
   }
 
   renderCompletedTodos() {
-    const completed = this.todoManager.completedTodos();
+    this.currentlyVisible = 'completed';
     this.setHeading('Completed');
-    this.renderTodoList(completed);
-    this.renderTodoCount(completed.length);
+    this.renderTodoPage();
+    // this.renderTodoList(completed);
+    // this.renderTodoCount(completed.length);
   }
 
   setHeading(newHeading) {
@@ -99,8 +129,10 @@ class App {
     document.onclick = this.handleDocumentClick.bind(this);
     this.modal.node.onsubmit = this.handleModalSubmit.bind(this);
     this.modal.node.onclick = this.handleModalClick.bind(this);
-    document.querySelector('section.all-todos h2').onclick = this.renderAllTodos.bind(this);
+    document.querySelector('section.all-todos h2').onclick = this.handleAllTodoClick.bind(this);
     document.querySelector('section.completed h2').onclick = this.renderCompletedTodos.bind(this);
+    this.allTodosSummary.node.onclick = this.handleAllTodoSummaryClick.bind(this);
+    this.completedTodosSummary.node.onclick = this.handleCompletedTodoSummaryClick.bind(this);
 
   }
 
@@ -138,11 +170,7 @@ class App {
         break;
       case "deleteTodo":
         const id = a.getAttribute('data-id');
-        this.storage.deleteTodo(id).then(() => {
-                                      this.todoList.deleteTodo(+id)
-                                      this.renderAllTodos()
-                                    });
-                                    
+        this.deleteTodo(id);                                    
         break;
     }
   }
@@ -151,18 +179,24 @@ class App {
     this.storage.toggleTodo(id)
                 .then((todo) => {
                   this.todoList.update(+id, todo);
-                  this.renderAllTodos();
+                  this.renderTodoPage();
                   this.refreshCompletedTodosSummary();
                 })
                 .catch(message => console.error(message));
+  }
 
+  deleteTodo(id) {
+    this.storage.deleteTodo(id).then(() => {
+                                  this.todoList.deleteTodo(+id);
+                                  this.renderTodoPage();
+                                  this.refreshSummaries();
+                                });
   }
 
   showModalFor(todo) {
     todo = JSON.parse(todo);
     this.modal.update(todo);
     this.modal.show();
-
   }
 
   handleFormClick(event) {
@@ -194,7 +228,8 @@ class App {
 
   handleModalClick(event) {
     if (event.target.getAttribute('name') === "completed") {
-      this.handleMarkTodoAsCompleted();
+      const id = this.modal.id();
+      this.updateTodo(id, {completed: true});
     }
   }
 
@@ -205,6 +240,48 @@ class App {
       this.toggleTodo(this.modal.id());
       this.modal.reset();
     }
+  }
+
+  handleAllTodoSummaryClick(event) {
+    event.preventDefault();
+    let currentNode = event.target;
+    while (currentNode.tagName != 'A' && currentNode.parentNode != null) {
+      currentNode = currentNode.parentNode;
+    }
+
+    if (currentNode.tagName === 'A') {
+      const searchCriteria = this.extractSearchCriteria(currentNode);
+      //const todos = this.todoList.matchingTodos(searchCriteria);
+      this.currentlyVisible = searchCriteria;
+      this.renderTodoPage();
+      const newHeading = currentNode.getAttribute('data-title');
+      this.setHeading(newHeading);
+    }
+  }
+
+  handleCompletedTodoSummaryClick(event) {
+    event.preventDefault();
+    let currentNode = event.target;
+    while (currentNode.tagName != 'A' && currentNode.parentNode != null) {
+      currentNode = currentNode.parentNode;
+    }
+
+    if (currentNode.tagName === 'A') {
+      const searchCriteria = this.extractSearchCriteria(currentNode)
+      //const matching = this.todoList.matchingTodos(searchCriteria);
+      this.currentlyVisible = searchCriteria;
+      this.renderTodoPage();
+      const newHeading = currentNode.getAttribute('data-title');
+      this.setHeading(newHeading);
+    }
+  }
+
+  extractSearchCriteria(node) {
+    const year = node.getAttribute('data-year') || null;
+    const month = node.getAttribute('data-month') || null;
+    const completed = node.getAttribute('data-completed');
+    const searchCriteria = { month: month, year: year, completed: completed };
+    return searchCriteria;
   }
 
   extractTodoProps(form) {
@@ -222,7 +299,8 @@ class App {
                 .then(todo => {
                   this.todoList.addTodo(todo);
                   this.modal.reset();
-                  this.renderAllTodos();
+                  this.renderTodoPage();
+                  this.refreshSummaries();
                 })
                 .catch(message => console.error(message));
   }
@@ -232,7 +310,7 @@ class App {
                 .then(todo => {
                   this.todoList.update(+id, todo);
                   this.modal.reset();
-                  this.renderAllTodos();
+                  this.renderTodoPage();
                   this.refreshCompletedTodosSummary();
                 })
                 .catch(message => console.error(message));
@@ -271,7 +349,6 @@ class App {
     const matching = this.todoList.matchingTodos(searchCriteria);
     const dd = li.querySelector('dd');
     dd.textContent = matching.length;
-
   }
 
   findUniquelyDated(todos) {

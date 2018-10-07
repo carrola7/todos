@@ -355,6 +355,7 @@ form.modal select {
   background-image: url(/images/scroll_triangles.png);
   background-position: 93% center;
   background-repeat: no-repeat;
+  background-color: #FFF;
 }
 
 form.modal textarea {
