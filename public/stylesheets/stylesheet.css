@@ -157,14 +157,14 @@ section.all-todos, section.completed {
   padding: 50px 0 0 0;
 }
 
-section h2 {
+li.title a {
   font-size: 18px;
   letter-spacing: 1px;
   color: white;
   padding: 10px 0 10px 102px;
 }
 
-section h2:hover {
+li.title a:hover {
   cursor: pointer;
 }
 
@@ -177,7 +177,7 @@ section h2.highlighted {
   margin-bottom: 12px;
 }*/
 
-section.completed li {
+section.completed li + li {
   text-decoration: line-through;
   color: #b2b5c3;
 }

@@ -14,22 +14,7 @@
       <input type="checkbox" id="nav-toggle"/>
       <label for="nav-toggle"><img src="images/hamburger.png" alt="toggle nav menu"></label>
       <nav id="nav">
-        <section class="all-todos">
-          <h2>
-            <img src="images/all-todos.png" alt="All todos" />All Todos<span class="highlighted">18</span>
-          </h2>
-          <ul id="allTodos">
-            
-          </ul>
-        </section>
-        <section class="completed">
-          <h2>
-            <img src="images/done.png" alt="Completed todos" />Completed<span class="highlighted">18</span>
-          </h2>
-          <ul id="completedTodos">
 
-          </ul>
-        </section>
       </nav>
       <main>
         <div id="todoPage">
@@ -178,14 +163,27 @@
           </script>
 
           <script data-type="partial" id="todoDatesPartial" type="text/x-handlebars">
-            <li> 
-              <a href="#" data-completed="{{completed}}" data-month="{{month}}" data-year="{{year}}" data-id="{{id}}" data-title="{{dueDate .}}">
-                <dl>
-                  <dt>{{dueDate .}}</dt>
-                  <dd>count</dd>
-                </dl>
-              </a>
-            </li>
+              <li> 
+                <a href="#" data-action="allDateItem" data-completed="{{completed}}" data-month="{{month}}" data-year="{{year}}" data-id="{{id}}" data-title="{{dueDate .}}">
+                  <dl>
+                    <dt>{{dueDate .}}</dt>
+                    <dd>count</dd>
+                  </dl>
+                </a>
+              </li>
+          </script>
+
+          <script data-type="partial" id="completedTodoDatesPartial" type="text/x-handlebars">
+            {{#if completed}}
+              <li> 
+                <a href="#" data-action="completedDateItem" data-completed="{{completed}}" data-month="{{month}}" data-year="{{year}}" data-id="{{id}}" data-title="{{dueDate .}}">
+                  <dl>
+                    <dt>{{dueDate .}}</dt>
+                    <dd>count</dd>
+                  </dl>
+                </a>
+              </li>
+            {{/if}}
           </script>
 
           <script id="todoDates" type="text/x-handlebars">
@@ -193,6 +191,29 @@
               {{> todoDatesPartial}}
             {{/each}}
           </script>
+
+        <script id=navTemplate type="text/x-handlebars">
+          <section class="all-todos">
+            <ul id="allTodos">
+              <li class="title">
+                <a data-action="all"><img src="images/all-todos.png" alt="All todos" />All Todos<span class="highlighted">18</span></a>
+              </li>
+              {{#each todos}}
+                {{> todoDatesPartial}}
+              {{/each}}
+            </ul>
+          </section>
+          <section class="completed">
+            <ul id="completedTodos">
+              <li class="title">
+                <a data-action="completed"><img src="images/done.png" alt="Completed todos" />Completed<span class="highlighted">18</span></a>
+              </li>
+              {{#each todos}}
+                {{> completedTodoDatesPartial}}
+              {{/each}}
+            </ul>
+          </section>
+        </script>
 
 
 

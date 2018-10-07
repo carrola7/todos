@@ -309,17 +309,52 @@ class Modal {
   }
 }
 
-class SummaryList {
+// class SummaryList {
+//   constructor(node, template) {
+//     this.node = node;
+//     this.template = template;
+//   }
+
+//   refresh(todos) {
+//     this.node.innerHTML = this.template({ todos: todos });
+//   }
+
+//   listItems() {
+//     return this.node.querySelectorAll('li');
+//   }
+// }
+
+class Nav {
   constructor(node, template) {
     this.node = node;
     this.template = template;
   }
 
   refresh(todos) {
-    this.node.innerHTML = this.template({ todos: todos });
+    this.node.innerHTML = this.template({ todos: todos })
   }
 
   listItems() {
     return this.node.querySelectorAll('li');
+  }
+
+  updateAllTodosCounter(count) {
+    this.node.querySelector('section.all-todos span.highlighted').textContent = count;
+  }
+
+  updateCompletedTodosCounter(count) {
+    this.node.querySelector('section.completed span.highlighted').textContent = count;
+  }
+
+  allTodosDates() {
+    return Array.from(this.node.querySelectorAll('section.all-todos li')).slice(1);
+  }
+
+  completedTodosDates() {
+    return Array.from(this.node.querySelectorAll('section.completed li')).slice(1);
+  }
+
+  dateListItems() {
+    return this.allTodosDates().concat(this.completedTodosDates());
   }
 }
