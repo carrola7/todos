@@ -285,6 +285,7 @@ class Modal {
     if (todo.description) this.description.value = todo.description;
     this.node.setAttribute('data-action', 'update')
     this.node.setAttribute('data-id', todo.id);
+    this.node.setAttribute('data-completed', todo.completed);
   }
 
   show() {
@@ -301,6 +302,10 @@ class Modal {
 
   id() {
     return this.node.getAttribute('data-id');
+  }
+
+  completed() {
+    return this.node.getAttribute('data-completed');
   }
 }
 

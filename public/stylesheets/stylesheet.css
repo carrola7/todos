@@ -98,7 +98,8 @@ section li.highlighted a {
   background-color: #148fd5;
 }*/
 
-section.all-todos li.highlighted dl dd{
+section li.highlighted dl dd,
+h2.highlighted span.highlighted{
   color: white;
   background-color: #148fd5;
 }

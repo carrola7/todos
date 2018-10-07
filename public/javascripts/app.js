@@ -88,19 +88,14 @@ class App {
   }
 
   findDateRestrictedTodos() {
-    const currentlyVisible = this.currentlyVisible;
-    if(currentlyVisible.completed === "false") {
-      return this.todoManager.todosInMonthYear(currentlyVisible.month, currentlyVisible.year);
+    const visible = this.currentlyVisible;
+    if(visible.completed === "false") {
+      return this.todoManager.todosInMonthYear(visible.month, visible.year);
     } else {
-      return this.todoManager.completedTodosInMonthYear(currentlyVisible.month, currentlyVisible.year);
+      return this.todoManager.completedTodosInMonthYear(visible.month, visible.year);
     }
   }
 
-  handleAllTodoClick() {
-    this.setHeading('All Todos');
-    this.currentlyVisible = 'all';
-    this.renderTodoPage();
-  }
 
   renderTodoList(todos) {
     const html = this.templates.todoItems({ todos: todos });
@@ -113,11 +108,11 @@ class App {
   }
 
   renderCompletedTodos() {
+    this.removeHighlights();
+    document.querySelector('section.completed h2').classList.add('highlighted');
     this.currentlyVisible = 'completed';
     this.setHeading('Completed');
     this.renderTodoPage();
-    // this.renderTodoList(completed);
-    // this.renderTodoCount(completed.length);
   }
 
   setHeading(newHeading) {
@@ -153,6 +148,14 @@ class App {
     }
   }
 
+  handleAllTodoClick() {
+    this.removeHighlights();
+    document.querySelector('section.all-todos h2').classList.add('highlighted');
+    this.setHeading('All Todos');
+    this.currentlyVisible = 'all';
+    this.renderTodoPage();
+  }
+
   handleDocumentClick(event) {
     switch (event.target.tagName) {
       case 'FORM':
@@ -180,7 +183,7 @@ class App {
                 .then((todo) => {
                   this.todoList.update(+id, todo);
                   this.renderTodoPage();
-                  this.refreshCompletedTodosSummary();
+                  this.refreshSummaries();
                 })
                 .catch(message => console.error(message));
   }
@@ -227,9 +230,12 @@ class App {
   }
 
   handleModalClick(event) {
-    if (event.target.getAttribute('name') === "completed") {
+    if (event.target.getAttribute('name') === "completed" &&
+        this.modal.completed() === "false") {
       const id = this.modal.id();
       this.updateTodo(id, {completed: true});
+    } else {
+      this.modal.reset();
     }
   }
 
@@ -244,14 +250,15 @@ class App {
 
   handleAllTodoSummaryClick(event) {
     event.preventDefault();
+    this.removeHighlights();
     let currentNode = event.target;
     while (currentNode.tagName != 'A' && currentNode.parentNode != null) {
       currentNode = currentNode.parentNode;
     }
 
     if (currentNode.tagName === 'A') {
+      currentNode.parentNode.classList.add('highlighted');
       const searchCriteria = this.extractSearchCriteria(currentNode);
-      //const todos = this.todoList.matchingTodos(searchCriteria);
       this.currentlyVisible = searchCriteria;
       this.renderTodoPage();
       const newHeading = currentNode.getAttribute('data-title');
@@ -261,19 +268,31 @@ class App {
 
   handleCompletedTodoSummaryClick(event) {
     event.preventDefault();
+    this.removeHighlights();
     let currentNode = event.target;
     while (currentNode.tagName != 'A' && currentNode.parentNode != null) {
       currentNode = currentNode.parentNode;
     }
 
     if (currentNode.tagName === 'A') {
+      currentNode.parentNode.classList.add('highlighted');
       const searchCriteria = this.extractSearchCriteria(currentNode)
-      //const matching = this.todoList.matchingTodos(searchCriteria);
       this.currentlyVisible = searchCriteria;
       this.renderTodoPage();
       const newHeading = currentNode.getAttribute('data-title');
       this.setHeading(newHeading);
     }
+  }
+
+  removeHighlights() {
+    document.querySelectorAll('li.highlighted').forEach(li => {
+      li.classList.remove('highlighted');
+    });
+
+    //this should be removed after refactor
+    document.querySelectorAll('h2.highlighted').forEach(h2 => {
+      h2.classList.remove('highlighted');
+    });
   }
 
   extractSearchCriteria(node) {
@@ -311,7 +330,7 @@ class App {
                   this.todoList.update(+id, todo);
                   this.modal.reset();
                   this.renderTodoPage();
-                  this.refreshCompletedTodosSummary();
+                  this.refreshSummaries();
                 })
                 .catch(message => console.error(message));
   }
