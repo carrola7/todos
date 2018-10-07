@@ -9,21 +9,13 @@ class App {
       this.todoManager = new TodoManager(this.todoList);
       this.currentlyVisible = 'all';
       this.renderTodoPage();
-      this.refreshSummaries();
+      this.nav = new Nav(document.querySelector('nav'), this.templates.navTemplate);
+      this.refreshNav();
       this.bind();
     }); 
     this.modal = new Modal(this.templates.modal);
 
-
-    // const allTodosUL = document.querySelector('#allTodos')
-    // this.allTodosSummary = new SummaryList(allTodosUL, this.templates.todoDates);
-
-    // const completedTodosUL = document.querySelector('#completedTodos')
-    // this.completedTodosSummary = new SummaryList(completedTodosUL, this.templates.todoDates);
-
-    this.nav = new Nav(document.querySelector('nav'), this.templates.navTemplate);
     
-
     this.todoListElement = document.getElementById('todoList'); 
 
   }
@@ -93,7 +85,7 @@ class App {
 
   findDateRestrictedTodos() {
     const visible = this.currentlyVisible;
-    if(visible.completed === "false") {
+    if(this.nav.activeSection === 'all') {
       return this.todoManager.todosInMonthYear(visible.month, visible.year);
     } else {
       return this.todoManager.completedTodosInMonthYear(visible.month, visible.year);
@@ -111,14 +103,6 @@ class App {
     document.querySelector('span.active-todos').textContent = count;
   }
 
-  renderCompletedTodos() {
-    this.removeHighlights();
-    document.querySelector('section.completed h2').classList.add('highlighted');
-    this.currentlyVisible = 'completed';
-    this.setHeading('Completed');
-    this.renderTodoPage();
-  }
-
   setHeading(newHeading) {
     document.querySelector('#todoPage h1').firstChild.textContent = newHeading;
   }
@@ -129,11 +113,6 @@ class App {
     this.modal.node.onsubmit = this.handleModalSubmit.bind(this);
     this.modal.node.onclick = this.handleModalClick.bind(this);
     this.nav.node.onclick = this.handleNavClick.bind(this);
-    //document.querySelector('section.all-todos h2').onclick = this.handleAllTodoClick.bind(this);
-    //document.querySelector('section.completed h2').onclick = this.renderCompletedTodos.bind(this);
-    //this.allTodosSummary.node.onclick = this.handleAllTodoSummaryClick.bind(this);
-    //this.completedTodosSummary.node.onclick = this.handleCompletedTodoSummaryClick.bind(this);
-
   }
 
   handleNavClick(event) {
@@ -146,37 +125,24 @@ class App {
     
     if(currentNode.tagName === 'A') {
       this.removeHighlights();
+      this.nav.activeSection = currentNode.parentNode.getAttribute('data-section');
+      this.nav.highlighted = currentNode.getAttribute('data-title');
       const visibility = currentNode.getAttribute('data-visibility');
-      const heading = currentNode.getAttribute('data-heading');
-      this.currentlyVisible = JSON.parse(visibility);
-      switch (action) {
-        case 'all':
-          this.handleAllTodoClick();
-          break;
-        case 'completed':
-
-          break;
-        case 'allDateItem':
-
-          break;
-        case 'completedDateItem':
-
-          break;
+      const title = currentNode.getAttribute('data-title');
+      if (typeof visibility === "string") {
+        this.currentlyVisible = visibility 
+      } else {
+        this.currentlyVisible = this.extractSearchCriteria(currentNode);
       }
+      this.nav.highlight()
+      this.setHeading(title);
+      this.renderTodoPage();
     }
   }
 
-  handleAllTodoClick() {
-    this.removeHighlights();
-    this.nav.highlight()
-    document.querySelector('section.all-todos h2').classList.add('highlighted');
-    this.setHeading('All Todos');
-    this.currentlyVisible = 'all';
-    this.renderTodoPage();
-  }
+
 
   handleTodoPageClick(event) {
-    console.log(event.target.tagName);
     switch (event.target.tagName) {
       case 'A':
         this.handleAnchorClick(event);
@@ -191,7 +157,6 @@ class App {
         break;
     }
   }
-
 
   handleDocumentClick(event) {
     switch (event.target.tagName) {
@@ -210,7 +175,7 @@ class App {
         break;
       case "deleteTodo":
         const id = a.getAttribute('data-id');
-        this.deleteTodo(id);                                    
+        this.deleteTodo(id);
         break;
     }
   }
@@ -220,7 +185,7 @@ class App {
                 .then((todo) => {
                   this.todoList.update(+id, todo);
                   this.renderTodoPage();
-                  this.refreshSummaries();
+                  this.refreshNav();
                 })
                 .catch(message => console.error(message));
   }
@@ -229,7 +194,7 @@ class App {
     this.storage.deleteTodo(id).then(() => {
                                   this.todoList.deleteTodo(+id);
                                   this.renderTodoPage();
-                                  this.refreshSummaries();
+                                  this.refreshNav();
                                 });
   }
 
@@ -267,57 +232,13 @@ class App {
   }
 
   handleModalClick(event) {
-    if (event.target.getAttribute('name') === "completed" &&
-        this.modal.completed() === "false") {
-      const id = this.modal.id();
-      this.updateTodo(id, {completed: true});
-    } else {
-      this.modal.reset();
-    }
-  }
-
-  handleMarkTodoAsCompleted() {
-    if (this.modal.isForNewTodo()) {
-      alert("Cannot mark as complete as item has not been created yet!");
-    } else {
-      this.toggleTodo(this.modal.id());
-      this.modal.reset();
-    }
-  }
-
-  handleAllTodoSummaryClick(event) {
-    event.preventDefault();
-    this.removeHighlights();
-    let currentNode = event.target;
-    while (currentNode.tagName != 'A' && currentNode.parentNode != null) {
-      currentNode = currentNode.parentNode;
-    }
-
-    if (currentNode.tagName === 'A') {
-      currentNode.parentNode.classList.add('highlighted');
-      const searchCriteria = this.extractSearchCriteria(currentNode);
-      this.currentlyVisible = searchCriteria;
-      this.renderTodoPage();
-      const newHeading = currentNode.getAttribute('data-title');
-      this.setHeading(newHeading);
-    }
-  }
-
-  handleCompletedTodoSummaryClick(event) {
-    event.preventDefault();
-    this.removeHighlights();
-    let currentNode = event.target;
-    while (currentNode.tagName != 'A' && currentNode.parentNode != null) {
-      currentNode = currentNode.parentNode;
-    }
-
-    if (currentNode.tagName === 'A') {
-      currentNode.parentNode.classList.add('highlighted');
-      const searchCriteria = this.extractSearchCriteria(currentNode)
-      this.currentlyVisible = searchCriteria;
-      this.renderTodoPage();
-      const newHeading = currentNode.getAttribute('data-title');
-      this.setHeading(newHeading);
+    if (event.target.getAttribute('name') === "completed") {
+      if (this.modal.completed() === "false") {
+        const id = this.modal.id();
+        this.updateTodo(id, {completed: true});
+      } else {
+        alert("Cannot mark as complete as item has not been created yet!");
+      }
     }
   }
 
@@ -325,11 +246,6 @@ class App {
     document.querySelectorAll('li.highlighted').forEach(li => {
       li.classList.remove('highlighted');
     });
-
-    // //this should be removed after refactor
-    // document.querySelectorAll('h2.highlighted').forEach(h2 => {
-    //   h2.classList.remove('highlighted');
-    // });
   }
 
   extractSearchCriteria(node) {
@@ -355,8 +271,10 @@ class App {
                 .then(todo => {
                   this.todoList.addTodo(todo);
                   this.modal.reset();
+                  this.currentlyVisible = 'all';
                   this.renderTodoPage();
-                  this.refreshSummaries();
+                  this.nav.resetHighlight();
+                  this.refreshNav();
                 })
                 .catch(message => console.error(message));
   }
@@ -367,14 +285,9 @@ class App {
                   this.todoList.update(+id, todo);
                   this.modal.reset();
                   this.renderTodoPage();
-                  this.refreshSummaries();
+                  this.refreshNav();
                 })
                 .catch(message => console.error(message));
-  }
-
-  refreshSummaries() {
-    this.refreshNav();
-    //this.refreshCompletedTodosSummary();
   }
 
   refreshNav() {
@@ -385,28 +298,17 @@ class App {
     this.nav.dateListItems().forEach(li => this.updateCount(li));
     this.nav.updateAllTodosCounter(allTodos.length);
     this.nav.updateCompletedTodosCounter(completedTodos.length);
-
-    // const allCounter = document.querySelector('section.all-todos h2 span');
-    // const completedCounter = document.querySelector('section.completed h2 span');
-    // allCounter.textContent = allTodos.length;
-    // completedCounter.textContent = completedTodos.length;
-  }
-
-  refreshCompletedTodosSummary() {
-    const completedTodos = this.todoManager.completedTodos();
-    const todos = this.findUniquelyDated(completedTodos);
-    this.completedTodosSummary.refresh(todos);
-    this.completedTodosSummary.listItems().forEach(li => this.updateCount(li, true));
-    const counter = document.querySelector('section.completed h2 span');
-    counter.textContent = completedTodos.length;
+    this.nav.highlight();
   }
 
   updateCount(li) {
+
     const year = li.firstElementChild.getAttribute('data-year') || null;
     const month = li.firstElementChild.getAttribute('data-month') || null;
     const completed = li.firstElementChild.getAttribute('data-completed');
     const searchCriteria = { month: month, year: year };
-
+    console.log(li);
+    console.log(completed);
     if (completed === "true")  {
       searchCriteria['completed'] = true;
     } 
@@ -424,15 +326,22 @@ class App {
       }
     }
 
-    const filtered = [];
+    const uniquelyDated = [];
     todos.forEach(todo => {
-      let seen = filtered.some(filteredTodo => {
-        return todo.year === filteredTodo.year &&
-               todo.month === filteredTodo.month;
+      let seen = uniquelyDated.filter(uniqueTodo => {
+        return todo.year === uniqueTodo.year &&
+               todo.month === uniqueTodo.month;
       });
-      if (!seen) filtered.push(todo);
+      if (seen.length > 0) {
+        if (!seen[0].completed) {
+          uniquelyDated.splice(uniquelyDated.indexOf(seen[0]), 1);
+          uniquelyDated.push(todo);
+        }
+      } else {
+        uniquelyDated.push(todo);
+      }
     });
-    return filtered.sort(byDate);
+    return uniquelyDated.sort(byDate);
   }
 }
 

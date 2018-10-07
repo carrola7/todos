@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css">
     <script src="javascripts/handlebars.js"></script>
-    <script src="javascripts/jquery.js"></script>
     <script src="javascripts/todo_manager.js"></script>
     <script src="javascripts/app.js"></script>
   </head>
@@ -19,7 +18,7 @@
       <main>
         <div id="todoPage">
           <h1>
-            02/16<span class="active-todos">8</span>
+            All Todos<span class="active-todos"></span>
           </h1>
           <p>
             <a data-action="newTodo" href="#">Add new to do</a>
@@ -163,8 +162,8 @@
           </script>
 
           <script data-type="partial" id="todoDatesPartial" type="text/x-handlebars">
-              <li> 
-                <a href="#" data-action="allDateItem" data-completed="{{completed}}" data-month="{{month}}" data-year="{{year}}" data-id="{{id}}" data-title="{{dueDate .}}">
+              <li data-section="all"> 
+                <a href="#" data-completed="false" data-month="{{month}}" data-year="{{year}}" data-id="{{id}}" data-title="{{dueDate .}}">
                   <dl>
                     <dt>{{dueDate .}}</dt>
                     <dd>count</dd>
@@ -175,8 +174,8 @@
 
           <script data-type="partial" id="completedTodoDatesPartial" type="text/x-handlebars">
             {{#if completed}}
-              <li> 
-                <a href="#" data-action="completedDateItem" data-completed="{{completed}}" data-month="{{month}}" data-year="{{year}}" data-id="{{id}}" data-title="{{dueDate .}}">
+              <li data-section="completed"> 
+                <a href="#" data-completed="true" data-month="{{month}}" data-year="{{year}}" data-id="{{id}}" data-title="{{dueDate .}}">
                   <dl>
                     <dt>{{dueDate .}}</dt>
                     <dd>count</dd>
@@ -195,8 +194,8 @@
         <script id=navTemplate type="text/x-handlebars">
           <section class="all-todos">
             <ul id="allTodos">
-              <li class="title">
-                <a data-action="all"><img src="images/all-todos.png" alt="All todos" />All Todos<span class="highlighted">18</span></a>
+              <li class="title" data-section="all">
+                <a data-visibility="all" data-title="All Todos"><img src="images/all-todos.png" alt="All todos" />All Todos<span class="highlighted">18</span></a>
               </li>
               {{#each todos}}
                 {{> todoDatesPartial}}
@@ -205,8 +204,8 @@
           </section>
           <section class="completed">
             <ul id="completedTodos">
-              <li class="title">
-                <a data-action="completed"><img src="images/done.png" alt="Completed todos" />Completed<span class="highlighted">18</span></a>
+              <li class="title" data-section="completed">
+                <a data-visibility="completed" data-title="Completed"><img src="images/done.png" alt="Completed todos" />Completed<span class="highlighted">18</span></a>
               </li>
               {{#each todos}}
                 {{> completedTodoDatesPartial}}

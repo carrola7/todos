@@ -274,7 +274,9 @@ class Modal {
     this.node.reset();
     this.node.setAttribute('data-action', 'add');
     this.node.removeAttribute('data-id');
-    this.node.classList.add('hidden');
+    this.node.classList.add('fade-out');
+    setTimeout(() => this.node.classList.add('hidden'), 600)
+
   }
 
   update(todo) {
@@ -289,6 +291,8 @@ class Modal {
   }
 
   show() {
+    this.node.classList.add('fade-in');
+    this.node.classList.remove('fade-out');
     this.node.classList.remove('hidden');
   }
 
@@ -328,6 +332,8 @@ class Nav {
   constructor(node, template) {
     this.node = node;
     this.template = template;
+    this.highlighted = 'All Todos';
+    this.activeSection = 'all';
   }
 
   refresh(todos) {
@@ -356,5 +362,17 @@ class Nav {
 
   dateListItems() {
     return this.allTodosDates().concat(this.completedTodosDates());
+  }
+
+  resetHighlight() {
+    this.highlighted = 'All Todos';
+    this.activeSection = 'all';
+  }
+
+  highlight() {
+    const lis = Array.from(this.node.querySelectorAll(`li[data-section="${this.activeSection}"]`))
+    const filtered = lis.filter(node => node.firstElementChild.getAttribute('data-title') === this.highlighted)[0]
+    filtered.classList.add('highlighted');
+
   }
 }
