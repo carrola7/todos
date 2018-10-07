@@ -192,6 +192,26 @@ class DatabasePersistence {
     });
   }
 
+  update(id, props) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', `/api/todos/${id}`);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.responseType = 'json';
+      xhr.onload = () => {
+        switch(xhr.status) {
+          case 201:
+            resolve(xhr.response);
+            break;
+          case 400:
+            reject(xhr.responseText);
+            break;
+        }
+      }
+      xhr.send(JSON.stringify(props));
+    })
+  }
+
   deleteTodo(id) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -253,6 +273,7 @@ class Modal {
   reset() {
     this.node.reset();
     this.node.setAttribute('data-action', 'add');
+    this.node.removeAttribute('data-id');
     this.node.classList.add('hidden');
   }
 
@@ -263,9 +284,37 @@ class Modal {
     if (todo.year) this.year.value = todo.year;
     if (todo.description) this.description.value = todo.description;
     this.node.setAttribute('data-action', 'update')
+    this.node.setAttribute('data-id', todo.id);
   }
 
   show() {
     this.node.classList.remove('hidden');
+  }
+
+  action() {
+    return this.node.getAttribute('data-action');
+  }
+
+  isForNewTodo() {
+    return this.action() === 'add';
+  }
+
+  id() {
+    return this.node.getAttribute('data-id');
+  }
+}
+
+class SummaryList {
+  constructor(node, template) {
+    this.node = node;
+    this.template = template;
+  }
+
+  refresh(todos) {
+    this.node.innerHTML = this.template({ todos: todos });
+  }
+
+  listItems() {
+    return this.node.querySelectorAll('li');
   }
 }

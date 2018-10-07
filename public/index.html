@@ -16,61 +16,18 @@
       <nav id="nav">
         <section class="all-todos">
           <h2>
-            <img src="images/all-todos.png" alt="All todos" />All Todos<span class="highlighted double-digit">18</span>
+            <img src="images/all-todos.png" alt="All todos" />All Todos<span class="highlighted">18</span>
           </h2>
-          <ul>
-            <li class="highlighted">
-              <a href="#">
-                <dl>
-                  <dt>02/16</dt>
-                  <dd>8</dd>
-                </dl>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <dl>
-                  <dt>03/16</dt>
-                  <dd>2</dd>
-                </dl>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <dl>
-                  <dt>04/16</dt>
-                  <dd>1</dd>
-                </dl>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <dl>
-                  <dt>05/16</dt>
-                  <dd>1</dd>
-                </dl>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <dl>
-                  <dt>06/16</dt>
-                  <dd>6</dd>
-                </dl>
-              </a>
-            </li>
+          <ul id="allTodos">
+            
           </ul>
         </section>
         <section class="completed">
           <h2>
-            <img src="images/done.png" alt="Completed todos" />Completed
+            <img src="images/done.png" alt="Completed todos" />Completed<span class="highlighted">18</span>
           </h2>
-          <ul>
-            <li class="done"><a href="#">02/15</a></li>
-            <li class="done"><a href="#">03/15</a></li>
-            <li class="done"><a href="#">04/15</a></li>
-            <li class="done"><a href="#">05/15</a></li>
-            <li class="done"><a href="#">06/14</a></li>
+          <ul id="completedTodos">
+
           </ul>
         </section>
       </nav>
@@ -219,3 +176,25 @@
               {{> todoItemPartial}}
             {{/each}}
           </script>
+
+          <script data-type="partial" id="todoDatesPartial" type="text/x-handlebars">
+            <li> 
+              <a href="#" data-month="{{month}}" data-year="{{year}}" data-id="{{id}}" data-title="{{dueDate .}}">
+                <dl>
+                  <dt>{{dueDate .}}</dt>
+                  <dd>count</dd>
+                </dl>
+              </a>
+            </li>
+          </script>
+
+          <script id="todoDates" type="text/x-handlebars">
+            {{#each todos}}
+              {{> todoDatesPartial}}
+            {{/each}}
+          </script>
+
+
+
+
+

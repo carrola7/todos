@@ -93,17 +93,6 @@ section li.highlighted a {
   color: white;
 }
 
-section.all-todos h2{
-  padding: 71px 0 0 102px;
-  margin-bottom: 10px;
-}
-
-section h2 {
-  font-size: 18px;
-  letter-spacing: 1px;
-  color: white;
-}
-
 /*section.all-todos li:hover dl dd{
   color: white;
   background-color: #148fd5;
@@ -119,6 +108,7 @@ section.all-todos li.highlighted dl dd{
 }
 
 section.all-todos dl dd, 
+section.completed dl dd,
 span.highlighted { 
   font-size: 14px;
   color: #b2b5c3;
@@ -127,8 +117,8 @@ span.highlighted {
   border-radius: 10px;
 }
 
-span.double-digit {
-  padding: 1px 3px;
+ul#completedTodos dt {
+  text-decoration: line-through;
 }
 
 section img {
@@ -145,7 +135,8 @@ section.completed img {
   vertical-align: -7px;
 }
 
-section.all-todos dd, 
+section.all-todos dd,
+section.completed dd, 
 span.highlighted {
   float: right;
   margin-right: 32px;
@@ -156,12 +147,36 @@ span.highlighted {
   top: 6px;
 }
 
-section.completed h2 {
-  padding: 55px 0 0 102px;
-  margin-bottom: 12px;
+/*section.all-todos h2{
+  padding: 71px 0 0 102px;
+  margin-bottom: 10px;
+}*/
+
+section.all-todos, section.completed {
+  padding: 50px 0 0 0;
 }
 
-section.completed .done {
+section h2 {
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: white;
+  padding: 10px 0 10px 102px;
+}
+
+section h2:hover {
+  cursor: pointer;
+}
+
+section h2.highlighted {
+  background-color: #38405e;  
+}
+
+/*section.completed h2 {
+  padding: 55px 0 0 102px;
+  margin-bottom: 12px;
+}*/
+
+section.completed li {
   text-decoration: line-through;
   color: #b2b5c3;
 }
