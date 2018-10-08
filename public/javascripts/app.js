@@ -10,14 +10,10 @@ class App {
       this.currentlyVisible = 'all';
       this.renderTodoPage();
       this.nav = new Nav(document.querySelector('nav'), this.templates.navTemplate);
-      this.refreshNav();
       this.bind();
+      this.refreshNav();
     }); 
     this.modal = new Modal(this.templates.modal);
-
-    
-    this.todoListElement = document.getElementById('todoList'); 
-
   }
 
   configureTemplates() {
@@ -83,6 +79,15 @@ class App {
     }
   }
 
+  renderTodoList(todos) {
+    const html = this.templates.todoItems({ todos: todos });
+    document.getElementById('todoList').innerHTML = html;
+  }
+
+  renderTodoCount(count) {
+    document.querySelector('span.active-todos').textContent = count;
+  }
+
   findDateRestrictedTodos() {
     const visible = this.currentlyVisible;
     if(this.nav.activeSection === 'all') {
@@ -92,21 +97,6 @@ class App {
     }
   }
 
-
-  renderTodoList(todos) {
-    const html = this.templates.todoItems({ todos: todos });
-    this.todoListElement.innerHTML = html;
-  }
-
-
-  renderTodoCount(count) {
-    document.querySelector('span.active-todos').textContent = count;
-  }
-
-  setHeading(newHeading) {
-    document.querySelector('#todoPage h1').firstChild.textContent = newHeading;
-  }
-
   bind() {
     document.getElementById('todoPage').onclick = this.handleTodoPageClick.bind(this);
     document.onclick = this.handleDocumentClick.bind(this);
@@ -114,33 +104,6 @@ class App {
     this.modal.node.onclick = this.handleModalClick.bind(this);
     this.nav.node.onclick = this.handleNavClick.bind(this);
   }
-
-  handleNavClick(event) {
-    event.preventDefault();
-    
-    let currentNode = event.target;
-    while (currentNode.tagName != 'A' && currentNode.parentNode != null) {
-      currentNode = currentNode.parentNode;
-    }
-    
-    if(currentNode.tagName === 'A') {
-      this.removeHighlights();
-      this.nav.activeSection = currentNode.parentNode.getAttribute('data-section');
-      this.nav.highlighted = currentNode.getAttribute('data-title');
-      const visibility = currentNode.getAttribute('data-visibility');
-      const title = currentNode.getAttribute('data-title');
-      if (typeof visibility === "string") {
-        this.currentlyVisible = visibility 
-      } else {
-        this.currentlyVisible = this.extractSearchCriteria(currentNode);
-      }
-      this.nav.highlight()
-      this.setHeading(title);
-      this.renderTodoPage();
-    }
-  }
-
-
 
   handleTodoPageClick(event) {
     switch (event.target.tagName) {
@@ -166,51 +129,6 @@ class App {
     }
   }
 
-  handleAnchorClick(event) {
-    event.preventDefault();
-    const a = event.target;
-    switch (a.getAttribute('data-action')) {
-      case "newTodo":
-        this.modal.show();
-        break;
-      case "deleteTodo":
-        const id = a.getAttribute('data-id');
-        this.deleteTodo(id);
-        break;
-    }
-  }
-
-  toggleTodo(id) {
-    this.storage.toggleTodo(id)
-                .then((todo) => {
-                  this.todoList.update(+id, todo);
-                  this.renderTodoPage();
-                  this.refreshNav();
-                })
-                .catch(message => console.error(message));
-  }
-
-  deleteTodo(id) {
-    this.storage.deleteTodo(id).then(() => {
-                                  this.todoList.deleteTodo(+id);
-                                  this.renderTodoPage();
-                                  this.refreshNav();
-                                });
-  }
-
-  showModalFor(todo) {
-    todo = JSON.parse(todo);
-    this.modal.update(todo);
-    this.modal.show();
-  }
-
-  handleFormClick(event) {
-    if(event.target.className.includes('modal')) {
-      event.preventDefault();
-      this.modal.reset();
-    }
-  }
-
   handleModalSubmit(event) {
     event.preventDefault();
     const input = document.querySelector('input[name="title"]');
@@ -231,6 +149,52 @@ class App {
     }
   }
 
+  handleNavClick(event) {
+    event.preventDefault();
+    
+    let currentNode = event.target;
+    while (currentNode.tagName != 'A' && currentNode.parentNode != null) {
+      currentNode = currentNode.parentNode;
+    }
+    
+    if(currentNode.tagName === 'A') {
+      this.nav.removeHighlights();
+      this.nav.activeSection = currentNode.parentNode.getAttribute('data-section');
+      this.nav.highlighted = currentNode.getAttribute('data-title');
+      const visibility = currentNode.getAttribute('data-visibility');
+      const title = currentNode.getAttribute('data-title');
+      if (typeof visibility === "string") {
+        this.currentlyVisible = visibility 
+      } else {
+        this.currentlyVisible = this.extractSearchCriteria(currentNode);
+      }
+      this.nav.highlight()
+      this.setHeading(title);
+      this.renderTodoPage();
+    }
+  }
+
+  handleAnchorClick(event) {
+    event.preventDefault();
+    const a = event.target;
+    switch (a.getAttribute('data-action')) {
+      case "newTodo":
+        this.modal.show();
+        break;
+      case "deleteTodo":
+        const id = a.getAttribute('data-id');
+        this.deleteTodo(id);
+        break;
+    }
+  }
+
+  handleFormClick(event) {
+    if(event.target.className.includes('modal')) {
+      event.preventDefault();
+      this.modal.reset();
+    }
+  }
+
   handleModalClick(event) {
     if (event.target.getAttribute('name') === "completed") {
       if (this.modal.completed() === "false") {
@@ -240,30 +204,6 @@ class App {
         alert("Cannot mark as complete as item has not been created yet!");
       }
     }
-  }
-
-  removeHighlights() {
-    document.querySelectorAll('li.highlighted').forEach(li => {
-      li.classList.remove('highlighted');
-    });
-  }
-
-  extractSearchCriteria(node) {
-    const year = node.getAttribute('data-year') || null;
-    const month = node.getAttribute('data-month') || null;
-    const completed = node.getAttribute('data-completed');
-    const searchCriteria = { month: month, year: year, completed: completed };
-    return searchCriteria;
-  }
-
-  extractTodoProps(form) {
-    const props = {};
-    const formData = new FormData(form);
-    for(var pair of formData.entries()) {
-      props[pair[0]] = pair[1];
-    }
-
-    return props;
   }
 
   addTodo(props) {
@@ -278,7 +218,25 @@ class App {
                 })
                 .catch(message => console.error(message));
   }
+  
+  deleteTodo(id) {
+    this.storage.deleteTodo(id).then(() => {
+                                  this.todoList.deleteTodo(+id);
+                                  this.renderTodoPage();
+                                  this.refreshNav();
+                                });
+  }
 
+  toggleTodo(id) {
+    this.storage.toggleTodo(id)
+                .then((todo) => {
+                  this.todoList.update(+id, todo);
+                  this.renderTodoPage();
+                  this.refreshNav();
+                })
+                .catch(message => console.error(message));
+  }
+  
   updateTodo(id, props) {
     this.storage.update(id, props)
                 .then(todo => {
@@ -288,6 +246,16 @@ class App {
                   this.refreshNav();
                 })
                 .catch(message => console.error(message));
+  }
+
+  showModalFor(todo) {
+    todo = JSON.parse(todo);
+    this.modal.update(todo);
+    this.modal.show();
+  }
+
+  setHeading(newHeading) {
+    document.querySelector('#todoPage h1').firstChild.textContent = newHeading;
   }
 
   refreshNav() {
@@ -302,19 +270,31 @@ class App {
   }
 
   updateCount(li) {
-
-    const year = li.firstElementChild.getAttribute('data-year') || null;
-    const month = li.firstElementChild.getAttribute('data-month') || null;
-    const completed = li.firstElementChild.getAttribute('data-completed');
+    const searchCriteria = this.extractSearchCriteria(li.firstElementChild);
+    const matching = this.todoList.matchingTodos(searchCriteria);
+    const count = li.querySelector('dd');
+    count.textContent = matching.length;
+  }
+  
+  extractSearchCriteria(node) {
+    const year = node.getAttribute('data-year') || null;
+    const month = node.getAttribute('data-month') || null;
+    const completed = node.getAttribute('data-completed');
     const searchCriteria = { month: month, year: year };
-    console.log(li);
-    console.log(completed);
     if (completed === "true")  {
       searchCriteria['completed'] = true;
     } 
-    const matching = this.todoList.matchingTodos(searchCriteria);
-    const dd = li.querySelector('dd');
-    dd.textContent = matching.length;
+    return searchCriteria;
+  }
+
+  extractTodoProps(form) {
+    const props = {};
+    const formData = new FormData(form);
+    for(var pair of formData.entries()) {
+      props[pair[0]] = pair[1];
+    }
+
+    return props;
   }
 
   findUniquelyDated(todos) {

@@ -157,15 +157,12 @@ const Todo = (function() {
 
 class DatabasePersistence {
   constructor() {
-    this.findAllAction = "/api/todos";
-    this.addTodoAction = "/api/todos";
-    this.deleteTodoAction = "/api/todos/"
   }
 
   findAllTodos() {
    return new Promise(resolve => {
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", this.findAllAction);
+    xhr.open("GET", "/api/todos");
     xhr.responseType = 'json';
     xhr.onload = () => resolve(xhr.response);
     xhr.send();
@@ -175,7 +172,7 @@ class DatabasePersistence {
   add(props) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open("POST", this.addTodoAction);
+      xhr.open("POST", "/api/todos");
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.responseType = 'json';
       xhr.onload = () => {
@@ -215,7 +212,7 @@ class DatabasePersistence {
   deleteTodo(id) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('DELETE', this.deleteTodoAction + id);
+      xhr.open('DELETE', "/api/todos/" + id);
       xhr.onload = () => {
         switch (xhr.status) {
           case 204:
@@ -313,21 +310,6 @@ class Modal {
   }
 }
 
-// class SummaryList {
-//   constructor(node, template) {
-//     this.node = node;
-//     this.template = template;
-//   }
-
-//   refresh(todos) {
-//     this.node.innerHTML = this.template({ todos: todos });
-//   }
-
-//   listItems() {
-//     return this.node.querySelectorAll('li');
-//   }
-// }
-
 class Nav {
   constructor(node, template) {
     this.node = node;
@@ -369,10 +351,15 @@ class Nav {
     this.activeSection = 'all';
   }
 
+  removeHighlights() {
+    document.querySelectorAll('li.highlighted').forEach(li => {
+      li.classList.remove('highlighted');
+    });
+  }
+
   highlight() {
     const lis = Array.from(this.node.querySelectorAll(`li[data-section="${this.activeSection}"]`))
     const filtered = lis.filter(node => node.firstElementChild.getAttribute('data-title') === this.highlighted)[0]
-    filtered.classList.add('highlighted');
-
+    if (filtered) filtered.classList.add('highlighted');
   }
 }
