@@ -157,89 +157,36 @@ class DatabasePersistence {
   }
 
   findAllTodos() {
-   return new Promise(resolve => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/todos");
-    xhr.responseType = 'json';
-    xhr.onload = () => resolve(xhr.response);
-    xhr.send();
-   });
+    return fetch("/api/todos", {
+      method: "GET"
+    });
  }
 
   add(props) {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", "/api/todos");
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.responseType = 'json';
-      xhr.onload = () => {
-        switch (xhr.status) {
-          case 201:
-            resolve(xhr.response);
-            break;
-          case 400:
-            reject(xhr.response);
-            break;
-        }
-      }
-      xhr.send(JSON.stringify(props));
+    return fetch("/api/todos", {
+      method: "POST",
+      body: JSON.stringify(props),
+      headers: { 'Content-Type': 'application/json' }
     });
   }
 
   update(id, props) {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('PUT', `/api/todos/${id}`);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.responseType = 'json';
-      xhr.onload = () => {
-        switch(xhr.status) {
-          case 201:
-            resolve(xhr.response);
-            break;
-          case 400:
-            reject(xhr.responseText);
-            break;
-        }
-      }
-      xhr.send(JSON.stringify(props));
-    })
+    return fetch(`/api/todos/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(props),
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
   deleteTodo(id) {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('DELETE', "/api/todos/" + id);
-      xhr.onload = () => {
-        switch (xhr.status) {
-          case 204:
-            resolve();
-            break;
-          case 400:
-            reject(xhr.responseText);
-            break;
-        }
-      }
-      xhr.send();
+    return fetch(`/api/todos/${id}`, {
+      method: 'DELETE',
     });
   }
 
   toggleTodo(id) {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', `/api/todos/${id}/toggle_completed`);
-      xhr.responseType = 'json';
-      xhr.onload = () => {
-        switch(xhr.status) {
-          case 201:
-            resolve(xhr.response);
-            break;
-          case 400:
-            reject(xhr.responseText);
-            break;
-        }
-      }
-      xhr.send();
+    return fetch(`/api/todos/${id}/toggle_completed`, {
+      method: 'POST',
     });
   }
 }

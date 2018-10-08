@@ -11,15 +11,18 @@ class App {
   constructor() {
     this.configureTemplates();
     this.storage = new DatabasePersistence();
-    this.storage.findAllTodos().then(todos => {
-      this.todoList = new TodoList(todos);
-      this.todoManager = new TodoManager(this.todoList);
-      this.currentlyVisible = 'all';
-      this.refreshTodoPage();
-      this.nav = new Nav(document.querySelector('nav'), this.templates.navTemplate);
-      this.bind();
-      this.refreshNav();
-    }); 
+    this.storage.findAllTodos()
+                .then(response => response.json())
+                .then(todos => {
+                  this.todoList = new TodoList(todos);
+                  this.todoManager = new TodoManager(this.todoList);
+                  this.currentlyVisible = 'all';
+                  this.refreshTodoPage();
+                  this.nav = new Nav(document.querySelector('nav'), this.templates.navTemplate);
+                  this.bind();
+                  this.refreshNav();
+                })
+                .catch(response => console.error(response)); 
     this.modal = new Modal(document.getElementById('modal'));
   }
 
@@ -217,6 +220,7 @@ class App {
 
   addTodo(props) {
     this.storage.add(props)
+                .then(response => response.json())
                 .then(todo => {
                   this.todoList.addTodo(todo);
                   this.modal.reset();
@@ -225,7 +229,7 @@ class App {
                   this.nav.resetHighlight();
                   this.refreshNav();
                 })
-                .catch(message => console.error(message));
+                .catch(response => console.error(response));
   }
   
   deleteTodo(id) {
@@ -233,28 +237,31 @@ class App {
                                   this.todoList.deleteTodo(+id);
                                   this.refreshTodoPage();
                                   this.refreshNav();
-                                });
+                                })
+                               .catch(response => console.error(response));
   }
 
   toggleTodo(id) {
     this.storage.toggleTodo(id)
+                .then(response => response.json())
                 .then((todo) => {
                   this.todoList.update(+id, todo);
                   this.refreshTodoPage();
                   this.refreshNav();
                 })
-                .catch(message => console.error(message));
+                .catch(response => console.error(response));
   }
   
   updateTodo(id, props) {
     this.storage.update(id, props)
+                .then(response => response.json())
                 .then(todo => {
                   this.todoList.update(+id, todo);
                   this.modal.reset();
                   this.refreshTodoPage();
                   this.refreshNav();
                 })
-                .catch(message => console.error(message));
+                .catch(response => console.error(response));
   }
 
   showModalFor(todo) {
