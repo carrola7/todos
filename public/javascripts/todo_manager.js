@@ -284,7 +284,7 @@ class Nav {
     return Array.from(this.node.querySelectorAll('section.completed li')).slice(1);
   }
 
-  dateListItems() {
+  getDateListItems() {
     return this.allTodosDates().concat(this.completedTodosDates());
   }
 
@@ -304,11 +304,16 @@ class Nav {
     const filtered = lis.filter(node => node.firstElementChild.getAttribute('data-title') === this.highlighted)[0]
     if (filtered) filtered.classList.add('highlighted');
   }
+
+  updateProperties(node) {
+    this.activeSection = node.parentNode.getAttribute('data-section');
+    this.highlighted = node.getAttribute('data-title');
+  }
 }
 
-export {TodoManager, 
-        TodoList, 
-        Todo, 
-        DatabasePersistence, 
-        Modal, 
-        Nav};
+export { TodoManager, 
+         TodoList, 
+         Todo, 
+         DatabasePersistence, 
+         Modal, 
+         Nav };

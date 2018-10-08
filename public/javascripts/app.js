@@ -1,11 +1,11 @@
 "use strict"
 
-import {TodoManager, 
-        TodoList, 
-        Todo, 
-        DatabasePersistence, 
-        Modal, 
-        Nav} from './todo_manager.js'
+import { TodoManager, 
+         TodoList, 
+         Todo, 
+         DatabasePersistence, 
+         Modal, 
+         Nav } from './todo_manager.js'
 
 class App {
   constructor() {
@@ -125,7 +125,6 @@ class App {
         this.toggleTodo(event.target.getAttribute('data-id'));
         break;
       case 'LABEL':
-        event.stopPropagation();
         this.showModalFor(event.target.getAttribute('data-todo'));
         break;
     }
@@ -146,16 +145,15 @@ class App {
       alert("The title must have at least three characters");
       return;
     }
-    let props;
+    const props = this.extractTodoProps(event.target);
     switch (event.target.getAttribute('data-action')) {
       case 'add':
-        props = this.extractTodoProps(event.target);
         this.addTodo(props);
         break;
       case 'update':
-        props = this.extractTodoProps(event.target);
         this.updateTodo(this.modal.id(), props);
         this.modal.reset();
+        break;
     }
   }
 
@@ -169,8 +167,7 @@ class App {
     
     if(currentNode.tagName === 'A') {
       this.nav.removeHighlights();
-      this.nav.activeSection = currentNode.parentNode.getAttribute('data-section');
-      this.nav.highlighted = currentNode.getAttribute('data-title');
+      this.nav.updateProperties(currentNode);
       const visibility = currentNode.getAttribute('data-visibility');
       const title = currentNode.getAttribute('data-title');
       if (typeof visibility === "string") {
@@ -280,7 +277,7 @@ class App {
     const completedTodos = this.todoManager.completedTodos();
     const todos = this.findUniquelyDated(allTodos);
     this.nav.refresh(todos);
-    this.nav.dateListItems().forEach(li => this.updateCount(li));
+    this.nav.getDateListItems().forEach(li => this.updateCount(li));
     this.nav.updateAllTodosCounter(allTodos.length);
     this.nav.updateCompletedTodosCounter(completedTodos.length);
     this.nav.highlight();
@@ -301,6 +298,7 @@ class App {
     if (completed === "true")  {
       searchCriteria['completed'] = true;
     } 
+
     return searchCriteria;
   }
 
@@ -328,14 +326,14 @@ class App {
       uniquelyDated.push(newTodo);
     }
 
-    function matchingMonthYear(uniqueTodo) {
+    function byMatchingMonthYear(uniqueTodo) {
       return this.year === uniqueTodo.year &&
              this.month === uniqueTodo.month;
     }
 
     const uniquelyDated = [];
     todos.forEach(todo => {
-      let seen = uniquelyDated.filter(matchingMonthYear.bind(todo));
+      let seen = uniquelyDated.filter(byMatchingMonthYear.bind(todo));
       if (seen.length > 0) {
         if (!seen[0].completed) {
           replaceTodo(seen[0], todo)
