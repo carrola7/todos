@@ -1,3 +1,5 @@
+"use strict"
+
 const TodoManager = (function() {
   let _todoList = new WeakMap();
 
@@ -53,7 +55,6 @@ const TodoList = (function() {
           let copied = Object.assign({}, todo);
           shallowCopy.push(copied);
         });
-
         return shallowCopy.map(props => createTodo(props));
       });
 
@@ -66,7 +67,6 @@ const TodoList = (function() {
     addTodo(todoProps) {
       const createTodo = _createTodo.get(this.constructor);
       const todos = _todos.get(this.constructor);
-
       todos.push(createTodo(todoProps));
       return this;
     }
@@ -74,7 +74,6 @@ const TodoList = (function() {
     deleteTodo(id) {
       const todos = _todos.get(this.constructor);
       let matchingTodo = todos.filter(todo => todo.id === id).pop();
-
       if(matchingTodo) {
         todos.splice(todos.indexOf(matchingTodo), 1);
       }
@@ -82,7 +81,6 @@ const TodoList = (function() {
 
     update(id, newProps) {
       const todos = _todos.get(this.constructor);
-
       const propNames = Object.keys(newProps);
       const matchingTodo = todos.filter(todo => todo.id === id).pop();
 
@@ -100,7 +98,6 @@ const TodoList = (function() {
     matchingTodos(props) {
       const todos = _todos.get(this.constructor);
       const createCopy = _createCopy.get(this.constructor);
-
       const propNames = Object.keys(props);
 
       const matching = todos.filter(todo => {
@@ -248,31 +245,25 @@ class DatabasePersistence {
 }
 
 class Modal {
-  constructor(template) {
-    this.node = this.createNode(template)
+  constructor(node) {
+    this.node = node;
     this.title = this.node.querySelector('input[id="title"]');
     this.day = this.node.querySelector('select[name="day"]');
     this.month = this.node.querySelector('select[name="month"]');
     this.year = this.node.querySelector('select[name="year"]');
     this.description = this.node.querySelector('textarea');
-  }
-
-  createNode(template) {
-    const holder = document.createElement('div');
-    holder.innerHTML = template({});
-    const node = holder.firstElementChild;
-    node.setAttribute('data-action', 'add');
-    node.classList.add('hidden');
-    document.querySelector('main').appendChild(node);
-    return node;
+    this.node.setAttribute('data-action', 'add');
+    this.node.classList.add('hidden');
   }
 
   reset() {
-    this.node.reset();
-    this.node.setAttribute('data-action', 'add');
-    this.node.removeAttribute('data-id');
     this.node.classList.add('fade-out');
-    setTimeout(() => this.node.classList.add('hidden'), 600)
+    setTimeout(() =>  {
+      this.node.reset();
+      this.node.setAttribute('data-action', 'add');
+      this.node.removeAttribute('data-id');
+      this.node.classList.add('hidden')
+    }, 400); 
 
   }
 
@@ -363,3 +354,10 @@ class Nav {
     if (filtered) filtered.classList.add('highlighted');
   }
 }
+
+export {TodoManager, 
+        TodoList, 
+        Todo, 
+        DatabasePersistence, 
+        Modal, 
+        Nav};

@@ -1,5 +1,12 @@
 "use strict"
 
+import {TodoManager, 
+        TodoList, 
+        Todo, 
+        DatabasePersistence, 
+        Modal, 
+        Nav} from './todo_manager.js'
+
 class App {
   constructor() {
     this.configureTemplates();
@@ -8,12 +15,12 @@ class App {
       this.todoList = new TodoList(todos);
       this.todoManager = new TodoManager(this.todoList);
       this.currentlyVisible = 'all';
-      this.renderTodoPage();
+      this.refreshTodoPage();
       this.nav = new Nav(document.querySelector('nav'), this.templates.navTemplate);
       this.bind();
       this.refreshNav();
     }); 
-    this.modal = new Modal(this.templates.modal);
+    this.modal = new Modal(document.getElementById('modal'));
   }
 
   configureTemplates() {
@@ -59,7 +66,7 @@ class App {
     });
   }
 
-  renderTodoPage() {
+  refreshTodoPage() {
     const todos = this.findVisibleTodos()
     this.renderTodoList(todos);
     this.renderTodoCount(todos.length);
@@ -170,7 +177,7 @@ class App {
       }
       this.nav.highlight()
       this.setHeading(title);
-      this.renderTodoPage();
+      this.refreshTodoPage();
     }
   }
 
@@ -200,8 +207,10 @@ class App {
       if (this.modal.completed() === "false") {
         const id = this.modal.id();
         this.updateTodo(id, {completed: true});
-      } else {
+      } else if (this.modal.isForNewTodo()) {
         alert("Cannot mark as complete as item has not been created yet!");
+      } else {
+        this.modal.reset();
       }
     }
   }
@@ -212,7 +221,7 @@ class App {
                   this.todoList.addTodo(todo);
                   this.modal.reset();
                   this.currentlyVisible = 'all';
-                  this.renderTodoPage();
+                  this.refreshTodoPage();
                   this.nav.resetHighlight();
                   this.refreshNav();
                 })
@@ -222,7 +231,7 @@ class App {
   deleteTodo(id) {
     this.storage.deleteTodo(id).then(() => {
                                   this.todoList.deleteTodo(+id);
-                                  this.renderTodoPage();
+                                  this.refreshTodoPage();
                                   this.refreshNav();
                                 });
   }
@@ -231,7 +240,7 @@ class App {
     this.storage.toggleTodo(id)
                 .then((todo) => {
                   this.todoList.update(+id, todo);
-                  this.renderTodoPage();
+                  this.refreshTodoPage();
                   this.refreshNav();
                 })
                 .catch(message => console.error(message));
@@ -242,7 +251,7 @@ class App {
                 .then(todo => {
                   this.todoList.update(+id, todo);
                   this.modal.reset();
-                  this.renderTodoPage();
+                  this.refreshTodoPage();
                   this.refreshNav();
                 })
                 .catch(message => console.error(message));
@@ -325,7 +334,6 @@ class App {
   }
 }
 
-var app;
 document.addEventListener('DOMContentLoaded', function() {
-  app = new App();
+  new App();
 })
