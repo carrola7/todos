@@ -207,11 +207,11 @@ class App {
 
   handleModalClick(event) {
     if (event.target.getAttribute('name') === "completed") {
-      if (this.modal.completed() === "false") {
+      if(this.modal.isForNewTodo()) {
+        alert("Cannot mark as complete as item has not been created yet!");
+      } else if (this.modal.todoNotCompleted()) {
         const id = this.modal.id();
         this.updateTodo(id, {completed: true});
-      } else if (this.modal.isForNewTodo()) {
-        alert("Cannot mark as complete as item has not been created yet!");
       } else {
         this.modal.reset();
       }
@@ -233,12 +233,13 @@ class App {
   }
   
   deleteTodo(id) {
-    this.storage.deleteTodo(id).then(() => {
-                                  this.todoList.deleteTodo(+id);
-                                  this.refreshTodoPage();
-                                  this.refreshNav();
-                                })
-                               .catch(response => console.error(response));
+    this.storage.deleteTodo(id)
+                .then(() => {
+                  this.todoList.deleteTodo(+id);
+                  this.refreshTodoPage();
+                  this.refreshNav();
+                })
+               .catch(response => console.error(response));
   }
 
   toggleTodo(id) {
@@ -322,16 +323,22 @@ class App {
       }
     }
 
+    function replaceTodo(existingTodo, newTodo) {
+      uniquelyDated.splice(uniquelyDated.indexOf(existingTodo), 1);
+      uniquelyDated.push(newTodo);
+    }
+
+    function matchingMonthYear(uniqueTodo) {
+      return this.year === uniqueTodo.year &&
+             this.month === uniqueTodo.month;
+    }
+
     const uniquelyDated = [];
     todos.forEach(todo => {
-      let seen = uniquelyDated.filter(uniqueTodo => {
-        return todo.year === uniqueTodo.year &&
-               todo.month === uniqueTodo.month;
-      });
+      let seen = uniquelyDated.filter(matchingMonthYear.bind(todo));
       if (seen.length > 0) {
         if (!seen[0].completed) {
-          uniquelyDated.splice(uniquelyDated.indexOf(seen[0]), 1);
-          uniquelyDated.push(todo);
+          replaceTodo(seen[0], todo)
         }
       } else {
         uniquelyDated.push(todo);

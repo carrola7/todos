@@ -246,6 +246,10 @@ class Modal {
   completed() {
     return this.node.getAttribute('data-completed');
   }
+
+  todoNotCompleted() {
+    return this.completed() === "false";
+  }
 }
 
 class Nav {
